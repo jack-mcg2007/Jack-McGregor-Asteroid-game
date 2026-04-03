@@ -2,7 +2,7 @@
 
 int main(void)
 {   
-    InitWindow(1000,600, "Asteroid game");
+    InitWindow(1000,300, "Asteroid game");
     while (!WindowShouldClose())
     {
         BeginDrawing();
