@@ -12,19 +12,21 @@ float bottom;
 char scoreString [50];
 float score = 0;
 
+float speed;
 
 struct Asteroid{
 float positionX;
 float positionY;
-float speed;
 float leftHitbox;
 float rightHitbox;
 float topHitbox;
 float bottomHitbox;
+int delay;
 };
-
-struct Asteroid a1;
-struct Asteroid a2;
+#define vertAsteroidCount 3
+#define horiAsteroidCount 3
+struct Asteroid verticalAsteroids [vertAsteroidCount];
+struct Asteroid horizontalAsteroids [horiAsteroidCount];
 
 bool gameOver = false;
 
@@ -50,36 +52,71 @@ void shipHitbox()
 }
 
 void asteroidHitbox()
-{
-    a1.leftHitbox = a1.positionX - 20;
-    a1.rightHitbox = a1.positionX + 20;
-    a1.topHitbox = a1.positionY - 20;
-    a1.bottomHitbox = a1.positionY + 20;
+{   
+    for(int i =0; i<vertAsteroidCount; i++){
+        verticalAsteroids[i].leftHitbox = verticalAsteroids[i].positionX - 20;
+        verticalAsteroids[i].rightHitbox = verticalAsteroids[i].positionX + 20;
+        verticalAsteroids[i].topHitbox = verticalAsteroids[i].positionY - 20;
+        verticalAsteroids[i].bottomHitbox = verticalAsteroids[i].positionY + 20;
+    }
 
-    a2.leftHitbox = a2.positionX - 20;
-    a2.rightHitbox = a2.positionX + 20;
-    a2.topHitbox = a2.positionY - 20;
-    a2.bottomHitbox = a2.positionY + 20;
+    for(int i =0; i<horiAsteroidCount; i++){
+        horizontalAsteroids[i].leftHitbox = horizontalAsteroids[i].positionX - 20;
+        horizontalAsteroids[i].rightHitbox = horizontalAsteroids[i].positionX + 20;
+        horizontalAsteroids[i].topHitbox = horizontalAsteroids[i].positionY - 20;
+        horizontalAsteroids[i].bottomHitbox = horizontalAsteroids[i].positionY + 20; 
+    }
 }    
-void verticalAsteroid()
+void verticalAsteroidMovement()
 {
-    a1.positionY += a1.speed;
-    if (a1.positionY >620)
+    for(int i =0; i<vertAsteroidCount; i++)
     {
-        a1.positionY = 0;
-        a1.positionX = GetRandomValue(20,580);
+        if(verticalAsteroids[i].delay>0)
+        {
+            verticalAsteroids[i].delay--;
+            continue;
+        }
+        verticalAsteroids[i].positionY += speed;
+        if (verticalAsteroids[i].positionY>580){
+        verticalAsteroids[i].positionX = GetRandomValue(20,580);
+        verticalAsteroids[i].positionY = 20;
+        }
     }
 }
 
-void horizontalAsteroid()
+void horizontalAsteroidMovement()
 {
-    a2.positionX += a2.speed;
-    if(a2.positionX > 620)
+    for(int i =0; i<horiAsteroidCount; i++)
     {
-        a2.positionX = 0;
-        a2.positionY = GetRandomValue(20,580);
+        if(horizontalAsteroids[i].delay>0)
+        {
+            horizontalAsteroids[i].delay--;
+            continue;
+        }
+        horizontalAsteroids[i].positionX += speed;
+        if (horizontalAsteroids[i].positionX>580){
+        horizontalAsteroids[i].positionY = GetRandomValue(20,580);
+        horizontalAsteroids[i].positionX = 20;
+        }
     }
-    
+}
+
+void collisionCheck()
+{
+    for(int i=0; i<vertAsteroidCount; i++)
+    {
+        if(left<verticalAsteroids[i].rightHitbox && right>verticalAsteroids[i].leftHitbox && top<verticalAsteroids[i].bottomHitbox && bottom>verticalAsteroids[i].topHitbox)
+        {
+            gameOver = true;
+        }
+    }
+    for(int i=0; i<horiAsteroidCount; i++)
+    {
+        if(left<horizontalAsteroids[i].rightHitbox && right>horizontalAsteroids[i].leftHitbox && top<horizontalAsteroids[i].bottomHitbox && bottom>horizontalAsteroids[i].topHitbox)
+        {
+            gameOver = true;
+        }
+    }
 }
     
 void updateScore()
@@ -92,9 +129,15 @@ void graphics()
 {
     BeginDrawing();
     ClearBackground(BLACK);
-    DrawTriangle((Vector2){shipX + 20, shipY +15}, (Vector2){shipX, shipY - 15}, (Vector2){shipX - 20, shipY +15}, RAYWHITE);
-    DrawCircle(a1.positionX, a1.positionY, 20, WHITE);
-    DrawCircle(a2.positionX, a2.positionY, 20, WHITE);
+    DrawTriangle((Vector2){shipX + 20, shipY +15}, (Vector2){shipX, shipY - 15}, (Vector2){shipX - 20, shipY +15}, RAYWHITE); //draws ship
+    for(int i =0; i<vertAsteroidCount; i++)
+    {
+    DrawCircle(verticalAsteroids[i].positionX, verticalAsteroids[i].positionY, 20, WHITE);
+    }
+    for(int i =0; i<horiAsteroidCount;i++)
+    {
+    DrawCircle(horizontalAsteroids[i].positionX, horizontalAsteroids[i].positionY, 20, WHITE);
+    }
     DrawText(scoreString, 10, 10, 20, RAYWHITE);
     EndDrawing();
 }
@@ -112,28 +155,41 @@ int main(void)
 {   
     InitWindow(600,600, "Asteroid game");
     SetTargetFPS(60);
-    a1.positionX = GetRandomValue(20,580);
-    a1.positionY = 20;
-    a1.speed = 3;
-    a2.positionY = GetRandomValue(20,580);
-    a2.positionX = 580;
-    a2.speed = 3;
+        for(int i =0; i<vertAsteroidCount; i++)
+        {
+             verticalAsteroids[i].positionX = GetRandomValue(20,580);
+             verticalAsteroids[i].positionY = 20;
+        }
+        for(int i =0; i<horiAsteroidCount; i++)
+         {
+             horizontalAsteroids[i].positionY = GetRandomValue(20,580);
+             horizontalAsteroids[i].positionX = 20;
+         }
+
+        for(int i =0; i<vertAsteroidCount; i++)
+        {
+            verticalAsteroids[i].delay = i*120;
+        }
+        for(int i =0; i<horiAsteroidCount; i++)
+        {
+            horizontalAsteroids[i].delay = i*120;
+        }
+        speed = 3;
+
     while (!WindowShouldClose() && !gameOver)
     {   
         moveShip();
-        horizontalAsteroid();
-        verticalAsteroid();
+        horizontalAsteroidMovement();
+        verticalAsteroidMovement();
         shipHitbox();
         asteroidHitbox();
         updateScore();
         graphics();
+        collisionCheck();
         if (score > 10){
-            a1.speed = 5;
-            a2.speed = 5;
+            speed = 5;
         }
-        if((left<a1.rightHitbox && right>a1.leftHitbox && top<a1.bottomHitbox && bottom>a1.topHitbox) || (left<a2.rightHitbox && right>a2.leftHitbox && top<a2.bottomHitbox && bottom>a2.topHitbox) ){
-            gameOver = true;
-        }
+  
 
         
     }
