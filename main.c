@@ -200,11 +200,11 @@ int main(void)
 {   
     InitWindow(600,600, "Asteroid game");
     SetTargetFPS(60);
-    shipTexture = LoadTexture("ship.png");
-    vertAsteroidTexture = LoadTexture("VerticalAsteroid.png");
-    horiAsteroidTexture = LoadTexture("HorizontalAsteroid.png");
-    nonPlayBackground = LoadTexture("baseBackground.png");
-    playBackground = LoadTexture("playingBackground.png");
+    shipTexture = LoadTexture("graphics/ship.png");
+    vertAsteroidTexture = LoadTexture("graphics/VerticalAsteroid.png");
+    horiAsteroidTexture = LoadTexture("graphics/HorizontalAsteroid.png");
+    nonPlayBackground = LoadTexture("graphics/baseBackground.png");
+    playBackground = LoadTexture("graphics/playingBackground.png");
         for(int i =0; i<vertAsteroidCount; i++)
         {
              verticalAsteroids[i].positionX = GetRandomValue(20,580);
