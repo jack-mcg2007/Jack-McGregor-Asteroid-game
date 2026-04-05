@@ -59,7 +59,7 @@ void moveShip()
 }  
 
 void shipHitbox()
-{
+{   //creates ship hitbox based on its position
     left = shipX - 20;
     right = shipX + 20;
     top = shipY - 15;
@@ -68,13 +68,14 @@ void shipHitbox()
 
 void asteroidHitbox()
 {   
+    //creates hitbox for each vertical falling asteroid based on position.
     for(int i =0; i<vertAsteroidCount; i++){
         verticalAsteroids[i].leftHitbox = verticalAsteroids[i].positionX - 20;
         verticalAsteroids[i].rightHitbox = verticalAsteroids[i].positionX + 20;
         verticalAsteroids[i].topHitbox = verticalAsteroids[i].positionY - 20;
         verticalAsteroids[i].bottomHitbox = verticalAsteroids[i].positionY + 20;
     }
-
+    //creates hitbox for each horizontal travelling asteroid based on position.
     for(int i =0; i<horiAsteroidCount; i++){
         horizontalAsteroids[i].leftHitbox = horizontalAsteroids[i].positionX - 20;
         horizontalAsteroids[i].rightHitbox = horizontalAsteroids[i].positionX + 20;
@@ -83,7 +84,8 @@ void asteroidHitbox()
     }
 }    
 void verticalAsteroidMovement()
-{
+{   
+    // loops through all vertical asteroids and causes them to fall based on the current speed. The delay ensures that the asteroids dont fall in sync
     for(int i =0; i<vertAsteroidCount; i++)
     {
         if(verticalAsteroids[i].delay>0)
@@ -97,10 +99,12 @@ void verticalAsteroidMovement()
         verticalAsteroids[i].positionY = 20;
         }
     }
+    //if the asteroid travels off screen(ie position Y is greater than 580) the asteroids Y position will be reset to 20 and its X position will be randomised.
 }
 
 void horizontalAsteroidMovement()
 {
+    // loops through all horizontal asteroids and causes them to travel based on the current speed. The delay ensures that the asteroids dont travel in sync
     for(int i =0; i<horiAsteroidCount; i++)
     {
         if(horizontalAsteroids[i].delay>0)
@@ -114,6 +118,7 @@ void horizontalAsteroidMovement()
         horizontalAsteroids[i].positionX = 20;
         }
     }
+    //if the asteroid travels off screen(ie position X is greater than 580) the asteroids X position will be reset to 20 and its Y position will be randomised.
 }
 
 void collisionCheck()
@@ -143,32 +148,32 @@ void updateScore()
 void graphics()
 {
     BeginDrawing();
-    DrawTexture(playBackground, 0, 0, WHITE);
+    DrawTexture(playBackground, 0, 0, WHITE);//draws gameplay background
     DrawTexture(shipTexture, shipX, shipY, WHITE); //draws ship
     for(int i =0; i<vertAsteroidCount; i++)
     {
-    DrawTexture(vertAsteroidTexture, verticalAsteroids[i].positionX, verticalAsteroids[i].positionY, WHITE);
+    DrawTexture(vertAsteroidTexture, verticalAsteroids[i].positionX, verticalAsteroids[i].positionY, WHITE);//draws falling asteroids
     }
     for(int i =0; i<horiAsteroidCount;i++)
     {
-    DrawTexture(horiAsteroidTexture, horizontalAsteroids[i].positionX, horizontalAsteroids[i].positionY, WHITE);
+    DrawTexture(horiAsteroidTexture, horizontalAsteroids[i].positionX, horizontalAsteroids[i].positionY, WHITE); //draws horizontal travelling asteroids
     }
-    DrawText(scoreString, 10, 10, 20, RAYWHITE);
+    DrawText(scoreString, 10, 10, 20, RAYWHITE); //displays the score
     EndDrawing();
 }
 
 void startScreen()
 {   
     BeginDrawing();
-    DrawTexture(nonPlayBackground, 0,0,WHITE);
-    DrawText("Press SPACE to start", 80, 240, 40, WHITE);
+    DrawTexture(nonPlayBackground, 0,0,WHITE); // draws start screen background
+    DrawText("Press SPACE to start", 80, 240, 40, WHITE); 
     EndDrawing();
 }
 
 void endScreen()
 {
     BeginDrawing();
-    DrawTexture(nonPlayBackground, 0,0,WHITE);
+    DrawTexture(nonPlayBackground, 0,0,WHITE); // draws game over background
     DrawText("GAME O V E R", 150, 240, 40, RED);
     DrawText("Press R to restart", 100, 340, 40, WHITE);
     DrawText(scoreString, 10, 10, 20, RAYWHITE);
@@ -180,13 +185,14 @@ void reset()
     shipX = 300;
     shipY = 300;
     score = 0;
-
+    //sets the ships position to the centre of the screen and sets score to zero
     for(int i =0; i<vertAsteroidCount; i++)
     {
         verticalAsteroids[i].positionX = GetRandomValue(20,580);
         verticalAsteroids[i].positionY = 20;
         verticalAsteroids[i].delay = i*120;
-    }
+    }   
+    //resets vertical asteroid position Y and randomises position X
 
     for(int i =0; i<horiAsteroidCount; i++)
     {
@@ -194,6 +200,7 @@ void reset()
         horizontalAsteroids[i].positionX = 20;
         horizontalAsteroids[i].delay = i*120;
     }
+     //resets horizontal asteroid position X and randomises position Y
 }
 
 int main(void)
@@ -267,7 +274,7 @@ int main(void)
         if (score >100){
             speed = 15;
         }
-    }
+    }//changes the speed of the asteroids based on the current score to increase dificulty
     CloseWindow();
     return 0;
 }  
